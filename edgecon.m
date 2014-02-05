@@ -1,19 +1,18 @@
-%%script to take multiedge result and clean up: 
+%%script to take MULTIEDGE result and clean up: 
     %this includes connecting edges and filling in 
     %to be run after multiedge while variables still exist
     %eventually append to end of multiedge
    
     
     %load in binedges 
-binedges = evalin('base', 'binedges');
-%A = evalin('base', 'A');
-A = evalin('base', 'connect');
+binedges = evalin('base', 'binedges'); %main result from multiedge
+A = evalin('base', 'A');               %original label field trace
 [xdim, ydim, zdim] = size(binedges);
 connect = binedges;
 counter = zeros(zdim, 2);
 %a vector to store the number of objects in each layer when done
 
-for z = 7 %1:zdim
+for z = 1:zdim
 z
 %collect each point in a set of endpoints to its nearest neighbor  not
 %including endpoints from the same segment
@@ -26,7 +25,7 @@ fsum = 2;
 
 
 
-while isum ~=fsum && counter(z,1)<10   
+while isum ~=fsum && counter(z,1)<10   %set maximum number of loops per z layer
     isum = sum(sum(layer));
     counter(z,1) = counter(z,1) + 1;
     
