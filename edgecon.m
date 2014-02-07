@@ -6,14 +6,14 @@
     
     %load in binedges 
 binedges = evalin('base', 'binedges'); %main result from multiedge
-A = evalin('base', 'A');               %original label field trace
+A = evalin('base', 'A');               %greyscale image volume
 [xdim, ydim, zdim] = size(binedges);
 connect = binedges;
 counter = zeros(zdim, 2);
 %a vector to store the number of objects in each layer when done
 
-for z = 1:zdim
-z
+for z = 7%1:zdim
+z;
 %collect each point in a set of endpoints to its nearest neighbor  not
 %including endpoints from the same segment
 
@@ -28,7 +28,7 @@ fsum = 2;
 while isum ~=fsum && counter(z,1)<10   %set maximum number of loops per z layer
     isum = sum(sum(layer));
     counter(z,1) = counter(z,1) + 1;
-    
+ layer = bwareaopen(layer, 2);   
 
 %define matrix with endpoints
 endpoints = im2double(bwmorph(layer, 'endpoints'));
@@ -112,15 +112,15 @@ end
 %combine layers and skeletonize
 layer = layer + bin2 + bin3;
 layer = bwmorph(layer,'skel', Inf);
-layer2 = layer;
+
 
 fsum = sum(sum(layer));
 layer = bwmorph(layer,'spur'); %spur removes pixel regardless, so if it happens before the fsum check fsum will decrease and never reach a s.s.
 
 end
 
-layer = bwmorph(layer, 'diag');
-layer = imfill(layer, 'holes');
+% layer = bwmorph(layer, 'diag');
+% layer = imfill(layer, 'holes');
 connect(:,:,z) = layer;
 
 cc = bwconncomp(layer);
@@ -128,7 +128,7 @@ counter(z,2) = cc.NumObjects;
 end
 
 figure;
-imagesc(connect(:,:,7));
+imagesc(connect(:,:,z));
 title('layer from final connect data');
 
 

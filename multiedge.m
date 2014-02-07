@@ -22,6 +22,7 @@
     olddir = pwd;
     %%directory = uigetdir; %use this line for gui to pick directory
     directory = 'F:\pseudo_harddrive\Avizo\WAG12-1A_Avizo\will\matlab\A_median_filtered\65-256-interp';
+    
    
     cd(directory);
     
@@ -170,14 +171,15 @@ for z=othresh + 1:zdim + othresh
         end
     end
 end
-gradient = xgrad + ygrad;
-gradedges = gradient .*canny;
+gradedges = (xgrad + ygrad) .*canny;
 
-%set borders equal to 1 if they were in B
-binedges(1+othresh,:,:) = binedges(1+othresh,:,:) + BB(1+othresh,:,:);
-binedges(ydim+othresh,:,:) = binedges(ydim+othresh,:,:) + BB(ydim+othresh,:,:);
-binedges(:,1+othresh,:) = binedges(:,1+othresh,:) + BB(:,1+othresh,:);
-binedges(:,xdim+othresh,:) = binedges(:,ydim+othresh,:) + BB(:,ydim+othresh,:);
+
+%this makes issues with edgecon, should be implemented later in the process
+% %set borders equal to 1 if they were in B
+% binedges(1+othresh,:,:) = binedges(1+othresh,:,:) + BB(1+othresh,:,:);
+% binedges(ydim+othresh,:,:) = binedges(ydim+othresh,:,:) + BB(ydim+othresh,:,:);
+% binedges(:,1+othresh,:) = binedges(:,1+othresh,:) + BB(:,1+othresh,:);
+% binedges(:,xdim+othresh,:) = binedges(:,ydim+othresh,:) + BB(:,ydim+othresh,:);
 
 %convert to binary
 binedges(gradedges>binthresh) = 1;
