@@ -4,13 +4,15 @@
     %eventually append to end of multiedge
    
     
-    %load in binedges 
-if (exist('binedges','var') == 1) && (exist('A','var') == 1)
+    %% load in binedges 
+if (exist('binedges','var') == 1) %&& (exist('A','var') == 1)
 binedges = evalin('base', 'binedges'); %main result from multiedge
-A = evalin('base', 'A');               %greyscale image volume
+%A = evalin('base', 'A');               %greyscale image volume
 else
     error('no A or binedges available. run multiedge.m');
 end   
+binedges = logical(binedges);
+binedges = imresize(binedges, 5);
 
 [xdim, ydim, zdim] = size(binedges);
 connect = binedges;
@@ -23,25 +25,27 @@ if exist('equi','var') == 1
 else
     error('no gradient available. run imggrad.m');
 end    
+equi = imresize(equi, 5);
   
-
-for z = 7%1:zdim
+%% main loop through layers starts here
+for z = 22 %1:zdim
 z;
 %collect each point in a set of endpoints to its nearest neighbor  not
 %including endpoints from the same segment
 
-layer = bwmorph(binedges(:,:,z),'skel', Inf); %skeletonize image
+layer = binedges(:,:,z);
 %layer = bwmorph(layer, 'bridge');
 
 isum = 1;
 fsum = 2;
 
 
-
-while isum ~=fsum && counter(z,1)<10   %set maximum number of loops per z layer
+%% main loop within each layer starts here
+while isum ~=fsum && counter(z,1)<1   %set maximum number of loops per z layer
     isum = sum(sum(layer));
     counter(z,1) = counter(z,1) + 1;
- layer = bwareaopen(layer, 2);   
+ %layer = bwareaopen(layer, 2);
+ layer = smooth(layer);
 
 %define matrix with endpoints
 endpoints = im2double(bwmorph(layer, 'endpoints'));
@@ -104,7 +108,7 @@ end
 %also, have a upper limit for distance 
 %think of drawing a line from point to closest point
 dthresh = 29; %pixel distance cut off
-rng = 30; %+/- range in degrees for comparing dir with equi
+rng = 30 + 10*counter(z,1); %+/- range in degrees for comparing dir with equi
 bin2 = zeros([xdim, ydim]);
 bin3 = zeros([xdim, ydim]);
 
@@ -140,11 +144,18 @@ for p = 1:size(epvector, 2)
 end
 %combine layers and skeletonize
 layer = layer + bin2 + bin3;
-layer = bwmorph(layer,'skel', Inf);
+%layer = bwmorph(layer,'skel', Inf);
 
 
 fsum = sum(sum(layer));
 %layer = bwmorph(layer,'spur'); %spur removes pixel regardless, so if it happens before the fsum check fsum will decrease and never reach a s.s.
+
+
+
+figure;
+imagesc(layer);
+title(['layer, pass' num2str(counter(z,2))]);
+
 
 end
 
@@ -156,9 +167,9 @@ cc = bwconncomp(layer);
 counter(z,2) = cc.NumObjects;
 end
 
-figure;
-imagesc(connect(:,:,z));
-title('layer from final connect data');
+% figure;
+% imagesc(connect(:,:,z));
+% title('layer from final connect data');
 
 
 % %save connect matrix to .mat file for avizo processing
