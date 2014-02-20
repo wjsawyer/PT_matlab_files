@@ -20,8 +20,8 @@
 
     % load data
     olddir = pwd;
-    %%directory = uigetdir; %use this line for gui to pick directory
-    directory = 'F:\pseudo_harddrive\Avizo\WAG12-1A_Avizo\will\matlab\A_median_filtered\65-256-interp';
+    directory = uigetdir; %use this line for gui to pick directory
+    %directory = 'F:\pseudo_harddrive\Avizo\WAG12-1A_Avizo\will\matlab\A_median_filtered\65-256-interp';
     
    
     cd(directory);

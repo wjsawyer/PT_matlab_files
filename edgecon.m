@@ -107,7 +107,7 @@ end
 %be drawn twice
 %also, have a upper limit for distance 
 %think of drawing a line from point to closest point
-dthresh = 29; %pixel distance cut off
+dthresh = 200; %pixel distance cut off
 rng = 30 + 10*counter(z,1); %+/- range in degrees for comparing dir with equi
 bin2 = zeros([xdim, ydim]);
 bin3 = zeros([xdim, ydim]);
