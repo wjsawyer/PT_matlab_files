@@ -97,7 +97,11 @@
     end
     
     mag = sqrt(dx.*dx + dy.*dy + dz.*dz); %for now dz = 0
-    dir = atand(dx./dy); %calculates the direction in degrees (for radians change to atan
+    
+    %IS THIS DX/DY OR DY/DX????
+    % dir = atand(dx./dy); %calculates the direction in degrees (for radians change to atan
+    
+    
     equi = dir + 90; %values perpendicular to the gradient, ie. eqipotential lines
     for j = 1:zdim
        equi(:,:,j) = conv2(equi(:,:,j), filter, 'same'); 

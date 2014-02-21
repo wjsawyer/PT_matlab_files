@@ -11,11 +11,11 @@ binedges = evalin('base', 'binedges'); %main result from multiedge
 else
     error('no A or binedges available. run multiedge.m');
 end   
-binedges = logical(binedges);
-binedges = imresize(binedges, 5);
+bin = logical(binedges);
+bin = imresize(bin, 5);
 
-[xdim, ydim, zdim] = size(binedges);
-connect = binedges;
+[xdim, ydim, zdim] = size(bin);
+connect = bin;
 counter = zeros(zdim, 2);
 %a vector to store the number of objects in each layer when done
 
@@ -25,7 +25,7 @@ if exist('equi','var') == 1
 else
     error('no gradient available. run imggrad.m');
 end    
-equi = imresize(equi, 5);
+eq = imresize(equi, 5);
   
 %% main loop through layers starts here
 for z = 22 %1:zdim
@@ -33,7 +33,8 @@ z;
 %collect each point in a set of endpoints to its nearest neighbor  not
 %including endpoints from the same segment
 
-layer = binedges(:,:,z);
+layer = smooth(bin(:,:,z));  
+
 %layer = bwmorph(layer, 'bridge');
 
 isum = 1;
@@ -41,11 +42,10 @@ fsum = 2;
 
 
 %% main loop within each layer starts here
-while isum ~=fsum && counter(z,1)<1   %set maximum number of loops per z layer
+while isum ~=fsum && counter(z,1)<10   %set maximum number of loops per z layer
     isum = sum(sum(layer));
     counter(z,1) = counter(z,1) + 1;
  %layer = bwareaopen(layer, 2);
- layer = smooth(layer);
 
 %define matrix with endpoints
 endpoints = im2double(bwmorph(layer, 'endpoints'));
@@ -71,7 +71,7 @@ for x = 1 : xdim
     for y = 1 : ydim
         if endpoints(x,y) == 1
             epvector(1:2,i) = [x;y];
-            epvector(3,i) = equi(x,y,z);
+            epvector(3,i) = eq(x,y,z);
             i = i + 1;
         end
     end
@@ -107,10 +107,13 @@ end
 %be drawn twice
 %also, have a upper limit for distance 
 %think of drawing a line from point to closest point
-dthresh = 200; %pixel distance cut off
+dthresh = 100; %pixel distance cut off
 rng = 30 + 10*counter(z,1); %+/- range in degrees for comparing dir with equi
-bin2 = zeros([xdim, ydim]);
-bin3 = zeros([xdim, ydim]);
+    %is there a way to change this based on the gradient magnitude for each
+    %endpoint. thus endpoints on a stronger gradient will have a smaller
+    %range, and those on a weaker grad a larger one.
+bin2 = false([xdim, ydim]);
+bin3 = false([xdim, ydim]);
 
 for p = 1:size(epvector, 2)
    if epclose(4,p) <=dthresh
@@ -121,7 +124,7 @@ for p = 1:size(epvector, 2)
        dir = atand(vdist/hdist); %in degrees
      if (((dir-rng)<epvector(3,p) && epvector(3,p)<(dir+rng)) ||....
         ((dir-rng)<(epvector(3,p)+180) && (epvector(3,p)+180)<(dir+rng)) ||....
-        ((dir-rng)<(epvector(3,p)-180) && (epvector(3,p)-180)<(dir+rng))) &&...
+        ((dir-rng)<(epvector(3,p)-180) && (epvector(3,p)-180)<(dir+rng))) ||...
         (((dir-rng)<epclose(4,p) && epclose(4,p)<(dir+rng)) ||....
         ((dir-rng)<(epclose(4,p)+180) && (epclose(4,p)+180)<(dir+rng)) ||....
         ((dir-rng)<(epclose(4,p)-180) && (epclose(4,p)-180)<(dir+rng)))
@@ -143,18 +146,18 @@ for p = 1:size(epvector, 2)
    end
 end
 %combine layers and skeletonize
-layer = layer + bin2 + bin3;
+layer = layer | bin2 | bin3;
 %layer = bwmorph(layer,'skel', Inf);
 
 
 fsum = sum(sum(layer));
-%layer = bwmorph(layer,'spur'); %spur removes pixel regardless, so if it happens before the fsum check fsum will decrease and never reach a s.s.
+layer = bwmorph(layer,'spur'); %spur removes pixel regardless, so if it happens before the fsum check fsum will decrease and never reach a s.s.
 
 
 
 figure;
-imagesc(layer);
-title(['layer, pass' num2str(counter(z,2))]);
+imshow(layer);
+title(['layer' num2str(z) ', pass' num2str(counter(z,1))]);
 
 
 end
