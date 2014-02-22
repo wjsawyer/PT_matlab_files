@@ -1,5 +1,5 @@
 %calculates the angle of the line segment near an endpoint
-function epvector = direction(bin)
+function [epvector, pieces] = lbldir(bin)
 %where bin is a 2d matrix
 %epvector is a 3 by n matrix where n is the number of endpoints
 [xdim, ydim] = size(bin); % gets dimensions of array
@@ -59,21 +59,5 @@ for q = 1:numendpoints
 end
 
 
-%makes pieces
-%label each piece with the int corrresponding to its spot in pixelidlist
-%make endpoints
 
-%for each endpoint, find what piece it is on
-%call piece in index form from cc.PixelIdxList{1,N}(:, 1);
-
-%turn index into x and y
-
-%remove points not close enough to the endpoint
-
-%do polyfit on the remainer and extract a slope
-
-%convert slope to angle
-%output epvector(3, length) where first two columns are coordinates, 3rd in the direction
-
-    
 

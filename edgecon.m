@@ -6,12 +6,13 @@
     
     %% load in binedges 
 if (exist('binedges','var') == 1) %&& (exist('A','var') == 1)
-binedges = evalin('base', 'binedges'); %main result from multiedge
-%A = evalin('base', 'A');               %greyscale image volume
+binedges = evalin('base', 'binedges');%main result from multiedge
+A = evalin('base', 'A');               %greyscale image volume
 else
     error('no A or binedges available. run multiedge.m');
 end   
 bin = logical(binedges);
+A = imresize(A, 5); %ensure dimensions are the same...
 bin = imresize(bin, 5);
 
 [xdim, ydim, zdim] = size(bin);
@@ -19,13 +20,13 @@ connect = bin;
 counter = zeros(zdim, 2);
 %a vector to store the number of objects in each layer when done
 
-%check to see if running with gradient already done
-if exist('equi','var') == 1
-    equi = evalin('base','equi');
-else
-    error('no gradient available. run imggrad.m');
-end    
-eq = imresize(equi, 5);
+% %check to see if running with gradient already done
+% if exist('equi','var') == 1
+%     equi = evalin('base','equi');
+% else
+%     error('no gradient available. run imggrad.m');
+% end    
+% eq = imresize(equi, 5);
   
 %% main loop through layers starts here
 for z = 22 %1:zdim
@@ -34,6 +35,7 @@ z;
 %including endpoints from the same segment
 
 layer = smooth(bin(:,:,z));  
+ctlayer = A(:,:,z);
 
 %layer = bwmorph(layer, 'bridge');
 
@@ -45,10 +47,9 @@ fsum = 2;
 while isum ~=fsum && counter(z,1)<10   %set maximum number of loops per z layer
     isum = sum(sum(layer));
     counter(z,1) = counter(z,1) + 1;
- %layer = bwareaopen(layer, 2);
 
 %define matrix with endpoints
-endpoints = im2double(bwmorph(layer, 'endpoints'));
+%endpoints = im2double(bwmorph(layer, 'endpoints'));
 %remove points based on CT image brightness
 % bavg = 29000; %edge brightness values should fall within bavg +/- brange
 % brange = 2000;
@@ -56,26 +57,31 @@ endpoints = im2double(bwmorph(layer, 'endpoints'));
 
 %define matrix of segments, each with a different value
 %define pieces just once per layer, or every step?
-cc = bwconncomp(layer);
-pieces = im2double(labelmatrix(cc));
+
 
 % set the value of each endpoint to that of the segment it is on
 % endpoints = pieces.*endpoints;
 
+%%call epvactor function
 
-%%%%%%%convert matrix of endpoints to a vecotr of their x,y coordinates
-epvector = zeros(3,sum(sum(endpoints)));
-%columns 1 and 2 are coordinates, column 3 is the CT gradient direction
-i = 1;
-for x = 1 : xdim 
-    for y = 1 : ydim
-        if endpoints(x,y) == 1
-            epvector(1:2,i) = [x;y];
-            epvector(3,i) = eq(x,y,z);
-            i = i + 1;
-        end
-    end
-end
+[epvector, pieces] = lbldir(layer); % uses slope of lines
+%[epvector, pieces] = ctdir(layer, ctlayer); %uses direction field of ct scan
+
+
+
+% %%%%%%%convert matrix of endpoints to a vecotr of their x,y coordinates
+% epvector = zeros(3,sum(sum(endpoints)));
+% %columns 1 and 2 are coordinates, column 3 is the CT gradient direction
+% i = 1;
+% for x = 1 : xdim 
+%     for y = 1 : ydim
+%         if endpoints(x,y) == 1
+%             epvector(1:2,i) = [x;y];
+%             epvector(3,i) = eq(x,y,z);
+%             i = i + 1;
+%         end
+%     end
+% end
 
 epclose = zeros(4,size(epvector, 2));
 %columns 1 and 2 are coordinates, column 3 is the ct gradient direction at
