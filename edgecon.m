@@ -62,7 +62,7 @@ while isum ~=fsum && counter(z,1)<10   %set maximum number of loops per z layer
 % set the value of each endpoint to that of the segment it is on
 % endpoints = pieces.*endpoints;
 
-%%call epvactor function
+%%call epvector function
 
 [epvector, pieces] = lbldir(layer); % uses slope of lines
 %[epvector, pieces] = ctdir(layer, ctlayer); %uses direction field of ct scan
@@ -114,7 +114,7 @@ end
 %also, have a upper limit for distance 
 %think of drawing a line from point to closest point
 dthresh = 100; %pixel distance cut off
-rng = 30 + 10*counter(z,1); %+/- range in degrees for comparing dir with equi
+rng = 30 + 20*counter(z,1); %+/- range in degrees for comparing dir with equi
     %is there a way to change this based on the gradient magnitude for each
     %endpoint. thus endpoints on a stronger gradient will have a smaller
     %range, and those on a weaker grad a larger one.

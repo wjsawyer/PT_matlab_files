@@ -24,6 +24,7 @@ ulimit = 31000;
     label(A<ulimit & A>llimit) = 1;
     edge = zeros(size(A));
     edgethresh = 16; % if log(edge)>this, them will be set to 0
+    size = 2000; %minimum size of piece to keep. 
     
     
     %values for checking change in brightness - defined distance to check
@@ -76,15 +77,16 @@ ulimit = 31000;
     
     
     %label3 takes raw label and applies an erosion filter
-    SE = strel('square',3);
-    label3 = imerode(label, SE);
+    SE = strel('disk',3);
+    label3 = imopen(label, SE);
   
     
     %label4 deletes groups of voxels smaller than a thresh size
     %should be used after some processing so that everything isn't
     %connected
-%     cc = bwconncomp(label2);
-%     numobj = cc.NumObjects;
+      cc = bwconncomp(label2);
+      numobj = cc.NumObjects;
+label4 = bwareaopen(label3, size);
     
     
     save('./autolabel.mat','label2')

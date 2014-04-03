@@ -1,7 +1,7 @@
 function z = multiedgeplot(n)
 %define which z-slice should be plotted
 B = evalin('base', 'B');
-gradient = evalin('base', 'gradient');
+gradedges = evalin('base', 'gradedges');
 canny = evalin('base', 'canny');
 binedges = evalin('base', 'binedges');
 xgrad = evalin('base', 'xgrad');
@@ -41,7 +41,7 @@ colorbar;
 
 %plot of canny 
 subplot(2,3,6); 
-imagesc(gradient(:,:,z));
+imagesc(gradedges(:,:,z));
 title('sum of x and y gradients');
 colorbar;
 
