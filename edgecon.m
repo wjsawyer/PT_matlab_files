@@ -7,7 +7,7 @@
     %% load in binedges 
 if (exist('binedges','var') == 1) %&& (exist('A','var') == 1)
 binedges = evalin('base', 'binedges');%main result from multiedge
-A = evalin('base', 'A');               %greyscale image volume
+A = evalin('base', 'vol');               %greyscale image volume
 else
     error('no A or binedges available. run multiedge.m');
 end   
@@ -29,7 +29,7 @@ counter = zeros(zdim, 2);
 % eq = imresize(equi, 5);
   
 %% main loop through layers starts here
-for z = 22 %1:zdim
+for z = 100 %1:zdim
 z;
 %collect each point in a set of endpoints to its nearest neighbor  not
 %including endpoints from the same segment

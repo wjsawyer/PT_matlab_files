@@ -29,7 +29,7 @@
 %   Chenyang Xu and Jerry Prince 6/17/97
 %   Copyright (c) 1996-97 by Chenyang Xu and Jerry Prince
 
-   cd ..;   s = cd;   s = [s, '/snake']; path(s, path); cd examples;
+   %cd ..;   s = cd;   s = [s, '/gvf_v5/snake']; path(s, path); cd examples;
    
    help gvf_ex;
 

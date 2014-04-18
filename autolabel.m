@@ -1,8 +1,8 @@
 
 
 %threshold limits for PT color
-llimit = 27500;
-ulimit = 31000;
+llimit = 40000;  %%%change depending upon input image...if it has been processed by sym_grad_map it should be the upper end
+ulimit = 65535;
 
     olddir = pwd;
     if exist('directory','var')~=1
@@ -17,6 +17,7 @@ ulimit = 31000;
     [~,xdim, ydim, zdim] = size(Avizo_A_mat);
 
     A = reshape(Avizo_A_mat(1,:,:,:),xdim,ydim,zdim);
+    A = vol;
     
     %this will produce false positives along edges between lighter and
     %darker materials.

@@ -71,6 +71,7 @@
     names=fieldnames(aux);
     Avizo_A_mat = aux.(names{1});
     A = reshape(Avizo_A_mat(1,:,:,:),ydim,xdim,zdim);
+    A = vol;
     
         AA = zeros((ydim+(2*othresh)), (xdim+(2*othresh)), (zdim+(2*othresh)));
     for x = 1:ydim %(othresh + 1):(ydim + othresh)

@@ -47,15 +47,15 @@ end
 
 I = stretch(I);
 
-figure;
-imagesc(A(:,:,149));
-figure;
-imagesc(B(:,:,149));
-figure;
-imagesc(I(:,:,149));
-
-%use graythresh function
-
+% figure;
+% imagesc(A(:,:,149));
+% figure;
+% imagesc(B(:,:,149));
+% figure;
+% imagesc(I(:,:,149));
+% 
+% use graythresh function
+% 
 
 end
 
@@ -69,3 +69,20 @@ scalar = double(intmax(class(IN))) / double(range);
 OUT = OUT*scalar;
 end
 
+% 
+% %%/
+%         aux = load('B.mat');
+%         %aux = load(strcat(directory, '\B.mat'));
+%         names=fieldnames(aux);
+%         Avizo_B_mat = aux.(names{1});
+%         [~,ydim, xdim, zdim] = size(Avizo_B_mat);
+%         B = reshape(Avizo_B_mat(1,:,:,:),ydim,xdim,zdim);
+%         disp('using avizo label field');
+%         
+%            aux = load('A.mat');
+%     %aux = load(strcat(directory, '\A.mat'));
+%     names=fieldnames(aux);
+%     Avizo_A_mat = aux.(names{1});
+%     A = reshape(Avizo_A_mat(1,:,:,:),ydim,xdim,zdim);
+
+%%
